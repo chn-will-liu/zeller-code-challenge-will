@@ -1,24 +1,34 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useQuery } from "@apollo/client";
+
+import {
+  ListZellerCustomers,
+  ListZellerCustomersResult,
+} from "./graphql/queries";
+import ZellerCustomers, {
+  ZellerCustomersSekelton,
+} from "./components/ZellerCustomers";
 
 function App() {
+  const { loading, error, data } =
+    useQuery<ListZellerCustomersResult>(ListZellerCustomers);
+
+  if (loading)
+    return (
+      <div data-testid="loadingContainer">
+        <ZellerCustomersSekelton />
+      </div>
+    );
+
+  if (error || !data)
+    return (
+      <div data-testid="errorContainer">
+        <p>An error occured while loading the data</p>
+      </div>
+    );
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <ZellerCustomers users={data.listZellerCustomers.items} />
     </div>
   );
 }
